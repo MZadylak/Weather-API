@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(140deg, coral, rgb(156, 1, 110) );
+        }
+
+
+        .weather {
+            width: 500px;
+            border: 1px solid #fff;
+            border-radius: 25px;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        h1 {
+            text-transform: uppercase;
+            text-align: center;
+            margin: 20px 0 30px 0;
+        }
+
+        img {
+            width: 80px;
+        }
+
+        .name {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px 10px 50px;
+        }
+
+        .city {
+            padding-bottom: 10px;
+            margin-left: 0px;
+        }
+
+        .type-city {
+            background: none;
+            border: none;
+            width: 140px;
+            margin-right: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .type-city::placeholder {
+            font-size: 12px;
+            text-align: center;
+            color: #bbb;
+        }
+
+        .name button {
+            background-color: transparent;
+            border: 1px solid white;
+            padding: 3px 8px;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .bottom-top {
+            border-top: 0.5px solid white;
+            border-bottom: 0.5px solid white;
+        }
+
+        .bottom {
+            text-align:  center;
+        }
+
+        .bottom-top {
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 8px 0;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .bottom-bottom {
+            display: flex;
+            justify-content: space-around;
+            padding: 18px 0 18px 0;
+            font-size: 12px;
+            letter-spacing: 0.6px;
+        }
+
+        button:hover {
+            background-color: rgba(0,0,0,0.34);
+            box-shadow: 0 0 1px 1px white;
+        }
+
+        
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="weather">
+        <h1>Weather App</h1>
+        <div class="top">
+            <div class="name">
+
+                <div>
+                <h2 class="city"></h2>
+                <input class="type-city" type="text" placeholder="Podaj nazwę miasta...">
+                <button>Wyślij</button>
+                </div>
+                
+                <img src="" alt="">
+            </div>
+            
+        </div>
+        <div class="bottom">
+            <div class="bottom-top">
+                <h3>Weather:</h3>
+                <h3>Temperature:</h3>
+                <h3>Humidity:</h3>
+            </div>
+            <div class="bottom-bottom">
+                <p class="weather-kind"></p>
+                <p class="temperature-kind"></p>
+                <p class="humidity-kind"></p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.js"></script>
+    <script>
+        const city = document.querySelector('.city');
+        const typeCity = document.querySelector('.type-city');
+        const btn = document.querySelector('button');
+        const imgWeather = document.querySelector('img');
+        const weather = document.querySelector('.weather-kind');
+        const temperature = document.querySelector('.temperature-kind');
+        const humidity = document.querySelector('.humidity-kind');
+        const apiKey = '&appid=c740e56c122bd492fbad67f0ba3ca3e9';
+        const apiLink = 'https://api.openweathermap.org/data/2.5/weather?q=';
+        const units = '&units=metric';
+        let url;
+        let cityName;
+
+
+        btn.addEventListener('click', function(){
+
+        if(typeCity.value !== ''){
+
+        const getWeather = () => {
+            url = apiLink + typeCity.value + apiKey + units;
+
+            
+
+            // fetch(url)
+            // .then(res => res.json)
+            // .then(res => console.log(res))
+            // .catch(err => console.log(err))
+
+            axios.get(url)
+                .then(res => {
+                    console.log(res);
+                    const status = Object.assign({}, ...res.data.weather);
+                    temperature.textContent = Math.floor(res.data.main.temp) + '°C';
+                    humidity.textContent = res.data.main.humidity + '%';
+                    weather.textContent = status.main;
+
+                    if(status.id >= 200 && status.id < 300) {
+                        imgWeather.setAttribute('src','thunderstorm.png');
+                    } else if (status.id >= 300 && status.id < 500) {
+                        imgWeather.setAttribute('src','drizzle.png');
+                    } else if (status.id >= 500 && status.id < 600) {
+                        imgWeather.setAttribute('src','rain.png');
+                    } else if (status.id >= 600 && status.id < 700) {
+                        imgWeather.setAttribute('src','ice.png');
+                    } else if (status.id >= 700 && status.id < 800) {
+                        imgWeather.setAttribute('src','fog.png');
+                    } else if (status.id == 800) {
+                        imgWeather.setAttribute('src','sun.png');
+                    } else if (status.id > 800) {
+                        imgWeather.setAttribute('src','cloud.png');
+                    } else {
+                        imgWeather.setAttribute('src','unknown.png');
+                    }
+                });
+            }
+            getWeather();
+            city.textContent = typeCity.value;
+            typeCity.value = '';
+
+        } else {
+            alert('Podaj jakąś wartość');
+        }
+        });
+        
+        
+
+    </script>
+    
+
+</body>
+</html>
